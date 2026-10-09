@@ -1,0 +1,184 @@
+<mxfile host="65bd71144e">
+    <diagram id="factoryflow-class-diagram" name="FactoryFlow - Class Diagram">
+        <mxGraphModel dx="964" dy="869" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1500" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="user" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="User" vertex="1">
+                    <mxGeometry height="330" width="270" x="40" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_attr" parent="user" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- nom : String&#xa;- prenom : String&#xa;- email : String&#xa;- password : String&#xa;- role : Role&#xa;- actif : Boolean&#xa;- createdAt : DateTime&#xa;- updatedAt : DateTime" vertex="1">
+                    <mxGeometry height="160" width="270" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_methods" parent="user" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ seConnecter()&#xa;+ seDeconnecter()&#xa;+ modifierProfil()&#xa;+ changerMotDePasse()&#xa;+ activer()&#xa;+ desactiver()" vertex="1">
+                    <mxGeometry height="140" width="270" y="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="role" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=45;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="&amp;lt;enumeration&amp;gt;&lt;br&gt;Role" vertex="1">
+                    <mxGeometry height="160" width="220" x="360" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="role_values" parent="role" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;whiteSpace=wrap;" value="&lt;br&gt;OPERATEUR&lt;br&gt;ADMIN" vertex="1">
+                    <mxGeometry height="115" width="220" y="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="matiere" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="MatierePremiere" vertex="1">
+                    <mxGeometry height="330" width="300" x="40" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="matiere_attr" parent="matiere" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- reference : String&#xa;- nom : String&#xa;- uniteMesure : String&#xa;- quantiteTotaleDisponible : Decimal&#xa;- seuilAlerte : Decimal&#xa;- createdAt : DateTime&#xa;- updatedAt : DateTime" vertex="1">
+                    <mxGeometry height="150" width="300" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="matiere_methods" parent="matiere" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ recalculerStockTotal()&#xa;+ estSousSeuil() : Boolean&#xa;+ verifierDisponibilite(qte : Decimal) : Boolean&#xa;+ preleverFifo(qteDemande : Decimal)" vertex="1">
+                    <mxGeometry height="150" width="300" y="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="lot_stock" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="LotStock" vertex="1">
+                    <mxGeometry height="260" width="300" x="40" y="880" as="geometry"/>
+                </mxCell>
+                <mxCell id="lot_stock_attr" parent="lot_stock" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- numeroLot : String&#xa;- quantiteInitiale : Decimal&#xa;- quantiteRestante : Decimal&#xa;- dateEntree : DateTime&#xa;- datePeremption : DateTime" vertex="1">
+                    <mxGeometry height="140" width="300" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="lot_stock_methods" parent="lot_stock" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ consommer(qte : Decimal) : Decimal&#xa;+ estEpuise() : Boolean" vertex="1">
+                    <mxGeometry height="90" width="300" y="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="produit" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="Produit" vertex="1">
+                    <mxGeometry height="280" width="300" x="760" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="produit_attr" parent="produit" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- reference : String&#xa;- nom : String&#xa;- description : String&#xa;- createdAt : DateTime&#xa;- updatedAt : DateTime" vertex="1">
+                    <mxGeometry height="130" width="300" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="produit_methods" parent="produit" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ ajouterMatiere()&#xa;+ supprimerMatiere()&#xa;+ modifierComposition()&#xa;+ verifierComposition()&#xa;+ calculerBesoin(qte : Decimal)" vertex="1">
+                    <mxGeometry height="120" width="300" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="composition_produit" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="CompositionProduit" vertex="1">
+                    <mxGeometry height="230" width="300" x="400" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="composition_produit_attr" parent="composition_produit" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- quantiteUnitaire : Decimal&#xa;- createdAt : DateTime&#xa;- updatedAt : DateTime" vertex="1">
+                    <mxGeometry height="100" width="300" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="composition_produit_methods" parent="composition_produit" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ modifierQuantite(qte : Decimal)&#xa;+ verifierQuantite() : Boolean" vertex="1">
+                    <mxGeometry height="90" width="300" y="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="ordre" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="OrdreFabrication" vertex="1">
+                    <mxGeometry height="380" width="330" x="1160" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="ordre_attr" parent="ordre" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- reference : String&#xa;- quantite : Decimal&#xa;- statut : StatusOrdre&#xa;- dateCreation : DateTime&#xa;- dateDebut : DateTime&#xa;- dateFin : DateTime&#xa;- dateAnnulation : DateTime&#xa;- motifAnnulation : String" vertex="1">
+                    <mxGeometry height="190" width="330" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ordre_methods" parent="ordre" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ planifier()&#xa;+ creerSnapshotComposition()&#xa;+ verifierDisponibilite()&#xa;+ demarrer()&#xa;+ consommerMatieres()&#xa;+ terminer()&#xa;+ annuler()" vertex="1">
+                    <mxGeometry height="150" width="330" y="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="ligne_ordre" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="LigneOrdre" vertex="1">
+                    <mxGeometry height="300" width="330" x="1160" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="ligne_ordre_attr" parent="ligne_ordre" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- referenceMatiere : String&#xa;- quantiteUnitaire : Decimal&#xa;- quantiteDemandee : Decimal&#xa;- quantitePrelevee : Decimal&#xa;- uniteMesure : String&#xa;- createdAt : DateTime" vertex="1">
+                    <mxGeometry height="160" width="330" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ligne_ordre_methods" parent="ligne_ordre" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ calculerQuantiteDemandee()&#xa;+ enregistrerPrelevement()&#xa;+ creerSnapshot()" vertex="1">
+                    <mxGeometry height="100" width="330" y="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="mouvement" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="Mouvement" vertex="1">
+                    <mxGeometry height="250" width="300" x="400" y="880" as="geometry"/>
+                </mxCell>
+                <mxCell id="mouvement_attr" parent="mouvement" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="- id : Integer&#xa;- type : TypeMouvement&#xa;- quantite : Decimal&#xa;- dateMouvement : DateTime&#xa;- motif : String" vertex="1">
+                    <mxGeometry height="130" width="300" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="mouvement_methods" parent="mouvement" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=8;spacingTop=5;whiteSpace=wrap;" value="+ enregistrerEntree()&#xa;+ enregistrerSortie()&#xa;+ annuler()" vertex="1">
+                    <mxGeometry height="90" width="300" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="type_mouvement" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=45;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="&amp;lt;enumeration&amp;gt;&lt;br&gt;TypeMouvement" vertex="1">
+                    <mxGeometry height="170" width="220" x="760" y="880" as="geometry"/>
+                </mxCell>
+                <mxCell id="type_mouvement_values" parent="type_mouvement" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;whiteSpace=wrap;" value="ENTREE&lt;br&gt;SORTIE&lt;br&gt;AJUSTEMENT" vertex="1">
+                    <mxGeometry height="120" width="220" y="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="status_ordre" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=45;rounded=1;html=1;fillColor=#F694C1;strokeColor=#AF45ED;fontColor=#095C86;sketch=1;whiteSpace=wrap;" value="&amp;lt;enumeration&amp;gt;&lt;br&gt;StatusOrdre" vertex="1">
+                    <mxGeometry height="180" width="220" x="1550" y="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="status_ordre_values" parent="status_ordre" style="text;html=1;strokeColor=none;fillColor=none;fontColor=#095C86;align=left;verticalAlign=top;spacingLeft=10;spacingTop=10;whiteSpace=wrap;" value="PLANIFIE&lt;br&gt;EN_COURS&lt;br&gt;TERMINE&lt;br&gt;ANNULE" vertex="1">
+                    <mxGeometry height="130" width="220" y="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_user_role" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="role" value="possède&#xa;1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_user_ordre" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="ordre" value="crée / affecte&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="310" y="230"/>
+                            <mxPoint x="1050" y="230"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_user_mouvement" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="mouvement" value="effectue&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="20" y="250"/>
+                            <mxPoint x="20" y="820"/>
+                            <mxPoint x="400" y="820"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_matiere_lot" edge="1" parent="1" source="matiere" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="lot_stock" value="possède lots&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_lot_mouvement" edge="1" parent="1" source="lot_stock" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="mouvement" value="historique des flux&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_lot_ligne" edge="1" parent="1" source="lot_stock" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="ligne_ordre" value="prélevé dans&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="190" y="1160"/>
+                            <mxPoint x="1160" y="1160"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_produit_composition" edge="1" parent="1" source="produit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="composition_produit" value="composé de&#xa;1..*">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_matiere_composition" edge="1" parent="1" source="matiere" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="composition_produit" value="utilisée dans&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_produit_ordre" edge="1" parent="1" source="produit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="ordre" value="fabriqué par&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1060" y="430"/>
+                            <mxPoint x="1060" y="280"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_ordre_ligne" edge="1" parent="1" source="ordre" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="ligne_ordre" value="contient snapshot&#xa;1..*">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_composition_snapshot" edge="1" parent="1" source="composition_produit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;dashed=1;endArrow=open;" target="ligne_ordre" value="&amp;lt;&amp;lt;snapshot à la création de l&#39;ordre&amp;gt;&amp;gt;">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="550" y="760"/>
+                            <mxPoint x="1320" y="760"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_ligne_matiere" edge="1" parent="1" source="ligne_ordre_attr" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" target="matiere" value="concerne une matière&#xa;1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1150" y="540"/>
+                            <mxPoint x="1150" y="440"/>
+                            <mxPoint x="190" y="440"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_ordre_mouvement" edge="1" parent="1" source="ordre" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="mouvement" value="provoque sorties&#xa;0..*">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1260" y="450"/>
+                            <mxPoint x="1090" y="450"/>
+                            <mxPoint x="1090" y="840"/>
+                            <mxPoint x="550" y="840"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_mouvement_type" edge="1" parent="1" source="mouvement" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="type_mouvement" value="type&#xa;1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_ordre_status" edge="1" parent="1" source="ordre" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#AF45ED;fontColor=#095C86;endArrow=none;" target="status_ordre" value="statut&#xa;1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
