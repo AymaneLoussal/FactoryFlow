@@ -18,10 +18,10 @@ const ordreFabricationSchema = new mongoose.Schema(
     quantite: {
       type: Number,
       required: true,
-      min: [Number.MIN_VALUE, 'quantite must be greater than 0'],
+      min: [1, 'quantite must be at least 1'],
       validate: {
-        validator: Number.isFinite,
-        message: 'quantite must be a finite number',
+        validator: Number.isInteger,
+        message: 'quantite must be an integer',
       },
     },
     operateur: {
