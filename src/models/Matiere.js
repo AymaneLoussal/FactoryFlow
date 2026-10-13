@@ -16,6 +16,7 @@ const matiereSchema = new mongoose.Schema(
     unite: {
       type: String,
       required: true,
+      trim: true,
     },
     seuilAlerte: {
       type: Number,
