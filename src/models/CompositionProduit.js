@@ -25,4 +25,6 @@ const compositionProduitSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+compositionProduitSchema.index({ produit: 1, matiere: 1 }, { unique: true });
+
 module.exports = mongoose.model('CompositionProduit', compositionProduitSchema);
