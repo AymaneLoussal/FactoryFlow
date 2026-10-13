@@ -34,7 +34,7 @@ const lotStockSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-lotStockSchema.pre('validate', function validateRemainingQuantity(next) {
+lotStockSchema.pre('validate', function validateRemainingQuantity() {
   if (
     this.quantiteInitiale != null &&
     this.quantiteRestante != null &&
@@ -46,7 +46,6 @@ lotStockSchema.pre('validate', function validateRemainingQuantity(next) {
     );
   }
 
-  next();
 });
 
 module.exports = mongoose.model('LotStock', lotStockSchema);
