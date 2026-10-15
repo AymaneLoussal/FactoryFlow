@@ -26,6 +26,26 @@ const LotStockRepository = {
       { $group: { _id: null, total: { $sum: '$quantiteRestante' } } },
     ]);
   },
+
+  findAvailableByMatiere(matiereId, options = {}) {
+    const query = LotStock.find({
+      matiere: matiereId,
+      quantiteRestante: { $gt: 0 },
+    }).sort({ dateEntree: 1, _id: 1 });
+
+    if (options && options.session) {
+      query.session(options.session);
+    }
+    return query;
+  },
+
+  updateQuantiteRestante(id, quantiteRestante, options = {}) {
+    return LotStock.findByIdAndUpdate(
+      id,
+      { quantiteRestante },
+      { new: true, runValidators: true, session: options && options.session }
+    );
+  },
 };
 
 module.exports = LotStockRepository;

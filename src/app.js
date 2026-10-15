@@ -3,6 +3,7 @@ const healthRoutes = require('./routes/healthRoutes');
 const compositionRoutes = require('./routes/compositionRoutes');
 const matiereRoutes = require('./routes/matiereRoutes');
 const lotStockRoutes = require('./routes/lotStockRoutes');
+const ordreRoutes = require('./routes/ordreRoutes');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use('/api', healthRoutes);
 app.use('/api', compositionRoutes);
 app.use('/api', matiereRoutes);
 app.use('/api', lotStockRoutes);
+app.use('/api', ordreRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

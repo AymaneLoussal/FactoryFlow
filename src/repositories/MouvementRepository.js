@@ -11,6 +11,10 @@ const MouvementRepository = {
   findByLot(lotId) {
     return Mouvement.find({ lot: lotId });
   },
+
+  findByOrdre(ordreId) {
+    return Mouvement.find({ ordre: ordreId });
+  },
 };
 
 module.exports = MouvementRepository;
