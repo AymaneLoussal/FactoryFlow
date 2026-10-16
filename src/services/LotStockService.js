@@ -154,6 +154,86 @@ const LotStockService = {
 
     return { matiere, stockDisponible: total };
   },
+
+  async ajuster(lotId, data) {
+    validateObjectId(lotId, 'lotId');
+
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      throw createError('Adjustment data is required', 400);
+    }
+
+    const ALLOWED_ADJUST_FIELDS = ['delta', 'raison'];
+    const unexpectedFields = Object.keys(data).filter((f) => !ALLOWED_ADJUST_FIELDS.includes(f));
+    if (unexpectedFields.length > 0) {
+      throw createError(`Unsupported adjustment field(s): ${unexpectedFields.join(', ')}`, 400);
+    }
+
+    const { delta, raison } = data;
+
+    if (delta == null) {
+      throw createError('delta is required', 400);
+    }
+    if (typeof delta !== 'number' || !Number.isFinite(delta) || delta === 0) {
+      throw createError('delta must be a non-zero finite number', 400);
+    }
+
+    if (raison == null || typeof raison !== 'string' || raison.trim().length === 0) {
+      throw createError('raison must be a non-empty string', 400);
+    }
+
+    const lotObjectId = new mongoose.Types.ObjectId(lotId);
+    const lot = await LotStockRepository.findById(lotObjectId);
+    if (!lot) {
+      throw createError('LotStock not found', 404);
+    }
+
+    if (delta < 0 && lot.quantiteRestante + delta < 0) {
+      throw createError(
+        `Adjustment would result in negative stock: current=${lot.quantiteRestante}, delta=${delta}`,
+        400
+      );
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const updatedLot = await LotStockRepository.ajusterQuantiteRestante(
+        lotObjectId,
+        delta,
+        { session }
+      );
+
+      // null means the $gte guard blocked the update (concurrent race condition)
+      if (!updatedLot) {
+        throw createError(
+          'Adjustment would result in negative stock (concurrent update detected)',
+          400
+        );
+      }
+
+      const mouvement = await MouvementRepository.create(
+        {
+          type: 'AJUSTEMENT',
+          matiere: lot.matiere._id || lot.matiere,
+          lot: lotObjectId,
+          quantite: Math.abs(delta),
+          raison: raison.trim(),
+          date: new Date(),
+        },
+        { session }
+      );
+
+      await session.commitTransaction();
+
+      return { lot: updatedLot, mouvement };
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      await session.endSession();
+    }
+  },
 };
 
 module.exports = LotStockService;

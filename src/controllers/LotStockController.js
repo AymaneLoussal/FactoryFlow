@@ -36,4 +36,13 @@ async function getStockDisponible(req, res, next) {
   }
 }
 
-module.exports = { enregistrerEntree, findAll, findById, getStockDisponible };
+async function ajuster(req, res, next) {
+  try {
+    const result = await LotStockService.ajuster(req.params.id, req.body);
+    return res.status(200).json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+module.exports = { enregistrerEntree, findAll, findById, getStockDisponible, ajuster };

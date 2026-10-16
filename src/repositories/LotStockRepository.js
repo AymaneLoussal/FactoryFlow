@@ -46,6 +46,24 @@ const LotStockRepository = {
       { new: true, runValidators: true, session: options && options.session }
     );
   },
+
+  /**
+   * Atomically applies a signed delta (positive = increase, negative = decrease)
+   * to quantiteRestante using $inc. For negative deltas the $gte guard ensures
+   * the result never drops below 0 even under concurrent requests.
+   * Returns the updated document, or null when the guard prevents the update.
+   */
+  ajusterQuantiteRestante(id, delta, options = {}) {
+    const filter = { _id: id };
+    if (delta < 0) {
+      filter.quantiteRestante = { $gte: -delta };
+    }
+    return LotStock.findOneAndUpdate(
+      filter,
+      { $inc: { quantiteRestante: delta } },
+      { new: true, runValidators: true, session: options && options.session }
+    );
+  },
 };
 
 module.exports = LotStockRepository;
