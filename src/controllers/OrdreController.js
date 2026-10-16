@@ -36,9 +36,29 @@ async function demarrer(req, res, next) {
   }
 }
 
+async function terminer(req, res, next) {
+  try {
+    const result = await OrdreService.terminer(req.params.id);
+    return res.status(200).json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function annuler(req, res, next) {
+  try {
+    const result = await OrdreService.annuler(req.params.id);
+    return res.status(200).json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   create,
   findAll,
   findById,
   demarrer,
+  terminer,
+  annuler,
 };

@@ -301,8 +301,12 @@ const OrdreService = {
         order._id,
         'EN_COURS',
         { dateDebut: new Date() },
-        { session }
+        { session, fromStatus: 'PLANIFIE' }
       );
+
+      if (!updatedOrder) {
+        throw createError('Order is already in progress', 409);
+      }
 
       await session.commitTransaction();
 
@@ -319,6 +323,85 @@ const OrdreService = {
     } finally {
       await session.endSession();
     }
+  },
+
+  async terminer(id) {
+    validateObjectId(id, 'id');
+
+    const order = await OrdreRepository.findById(id);
+    if (!order) {
+      throw createError('OrdreFabrication not found', 404);
+    }
+
+    if (order.status === 'TERMINE') {
+      throw createError('Order is already completed', 409);
+    }
+    if (order.status === 'PLANIFIE') {
+      throw createError('Cannot complete an order that is planned and not in progress', 409);
+    }
+    if (order.status === 'ANNULE') {
+      throw createError('Cannot complete a cancelled order', 409);
+    }
+    if (order.status !== 'EN_COURS') {
+      throw createError(`Cannot complete order with status ${order.status}`, 409);
+    }
+
+    const dateFin = new Date();
+    const updatedOrder = await OrdreRepository.updateStatus(
+      order._id,
+      'TERMINE',
+      { dateFin },
+      { fromStatus: 'EN_COURS' }
+    );
+
+    if (!updatedOrder) {
+      throw createError('Order is already completed', 409);
+    }
+
+    const orderObj = updatedOrder.toObject ? updatedOrder.toObject() : { ...updatedOrder };
+    return {
+      message: 'Order completed successfully',
+      ordre: orderObj,
+    };
+  },
+
+  async annuler(id) {
+    validateObjectId(id, 'id');
+
+    const order = await OrdreRepository.findById(id);
+    if (!order) {
+      throw createError('OrdreFabrication not found', 404);
+    }
+
+    if (order.status === 'ANNULE') {
+      throw createError('Order is already cancelled', 409);
+    }
+    if (order.status === 'TERMINE') {
+      throw createError('Cannot cancel a completed order', 409);
+    }
+    if (order.status === 'EN_COURS') {
+      throw createError('Cannot cancel an order in progress: materials have already been consumed', 400);
+    }
+    if (order.status !== 'PLANIFIE') {
+      throw createError(`Cannot cancel order with status ${order.status}`, 409);
+    }
+
+    const updatedOrder = await OrdreRepository.updateStatus(
+      order._id,
+      'ANNULE',
+      {},
+      { fromStatus: 'PLANIFIE' }
+    );
+
+    if (!updatedOrder) {
+      throw createError('Order is already cancelled or in progress', 409);
+    }
+
+    const orderObj = updatedOrder.toObject ? updatedOrder.toObject() : { ...updatedOrder };
+    return {
+      message: 'Order cancelled successfully',
+      ordre: orderObj,
+    };
   },
 };
 

@@ -25,8 +25,12 @@ const OrdreRepository = {
   },
 
   updateStatus(id, status, extraData = {}, options = {}) {
+    const filter = { _id: id };
+    if (options.fromStatus) {
+      filter.status = options.fromStatus;
+    }
     return OrdreFabrication.findOneAndUpdate(
-      { _id: id },
+      filter,
       { status, ...extraData },
       { new: true, runValidators: true, session: options.session }
     );
