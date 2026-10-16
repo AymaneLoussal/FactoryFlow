@@ -11,16 +11,38 @@ const OrdreFabrication = require('../../src/models/OrdreFabrication');
 const LigneOrdre = require('../../src/models/LigneOrdre');
 const OrdreService = require('../../src/services/OrdreService');
 
-const TEST_DB_URI = process.env.TEST_MONGO_URI || 'mongodb://127.0.0.1:27017/factoryflow_test_fifo_tx?directConnection=true';
+function getTestDatabaseUri() {
+  if (process.env.TEST_MONGO_URI) {
+    return process.env.TEST_MONGO_URI;
+  }
+  if (process.env.MONGO_URI) {
+    // Safely substitute the database name with factoryflow_test_fifo_tx to never touch development db
+    return process.env.MONGO_URI.replace(/\/[^/?]+(\?|$)/, '/factoryflow_test_fifo_tx$1');
+  }
+  return 'mongodb://127.0.0.1:27017/factoryflow_test_fifo_tx?directConnection=true';
+}
+
+const TEST_DB_URI = getTestDatabaseUri();
 
 let isReplSetReady = false;
+
+async function safeCleanTestDb() {
+  if (
+    mongoose.connection &&
+    mongoose.connection.readyState === 1 &&
+    mongoose.connection.db &&
+    mongoose.connection.db.databaseName === 'factoryflow_test_fifo_tx'
+  ) {
+    await mongoose.connection.dropDatabase();
+  }
+}
 
 test.before(async () => {
   try {
     await mongoose.connect(TEST_DB_URI, { serverSelectionTimeoutMS: 1500 });
     const hello = await mongoose.connection.db.admin().command({ hello: 1 });
     if (hello.setName) {
-      await mongoose.connection.dropDatabase();
+      await safeCleanTestDb();
       isReplSetReady = true;
     } else {
       await mongoose.disconnect();
@@ -36,7 +58,7 @@ test.before(async () => {
 test.after(async () => {
   if (isReplSetReady && mongoose.connection.readyState === 1) {
     try {
-      await mongoose.connection.dropDatabase();
+      await safeCleanTestDb();
     } finally {
       await mongoose.disconnect();
     }

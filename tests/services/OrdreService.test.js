@@ -446,3 +446,117 @@ test('demarrer rolls back transaction when movement creation fails', async () =>
 
   assert.equal(sessionAborted, true);
 });
+
+// ── OrdreService.terminer ───────────────────────────────────────────────────
+
+test('terminer completes an EN_COURS order successfully and records dateFin', async () => {
+  const order = { _id: ids.ordre, reference: 'OF-001', status: 'EN_COURS' };
+  let updatedStatusData = null;
+
+  stub(OrdreRepository, 'findById', async () => order);
+  stub(OrdreRepository, 'updateStatus', async (id, status, extra) => {
+    updatedStatusData = { status, ...extra };
+    return { _id: id, reference: 'OF-001', status, ...extra };
+  });
+
+  const result = await OrdreService.terminer(ids.ordre);
+
+  assert.equal(result.message, 'Order completed successfully');
+  assert.equal(updatedStatusData.status, 'TERMINE');
+  assert.ok(updatedStatusData.dateFin instanceof Date);
+  assert.equal(result.ordre.status, 'TERMINE');
+});
+
+test('terminer throws 404 when order does not exist', async () => {
+  stub(OrdreRepository, 'findById', async () => null);
+
+  await assert.rejects(
+    () => OrdreService.terminer(ids.ordre),
+    (error) => { expectError(error, 404, 'OrdreFabrication not found'); return true; }
+  );
+});
+
+test('terminer rejects when order is already completed', async () => {
+  stub(OrdreRepository, 'findById', async () => ({ _id: ids.ordre, status: 'TERMINE' }));
+
+  await assert.rejects(
+    () => OrdreService.terminer(ids.ordre),
+    (error) => { expectError(error, 409, 'Order is already completed'); return true; }
+  );
+});
+
+test('terminer rejects when order is planned (not started)', async () => {
+  stub(OrdreRepository, 'findById', async () => ({ _id: ids.ordre, status: 'PLANIFIE' }));
+
+  await assert.rejects(
+    () => OrdreService.terminer(ids.ordre),
+    (error) => { expectError(error, 409, 'Cannot complete an order that is planned and not in progress'); return true; }
+  );
+});
+
+test('terminer rejects when order is cancelled', async () => {
+  stub(OrdreRepository, 'findById', async () => ({ _id: ids.ordre, status: 'ANNULE' }));
+
+  await assert.rejects(
+    () => OrdreService.terminer(ids.ordre),
+    (error) => { expectError(error, 409, 'Cannot complete a cancelled order'); return true; }
+  );
+});
+
+// ── OrdreService.annuler ────────────────────────────────────────────────────
+
+test('annuler cancels a PLANIFIE order successfully without stock changes', async () => {
+  const order = { _id: ids.ordre, reference: 'OF-001', status: 'PLANIFIE' };
+  let updatedStatusData = null;
+
+  stub(OrdreRepository, 'findById', async () => order);
+  stub(OrdreRepository, 'updateStatus', async (id, status, extra) => {
+    updatedStatusData = { status, ...extra };
+    return { _id: id, reference: 'OF-001', status, ...extra };
+  });
+
+  const result = await OrdreService.annuler(ids.ordre);
+
+  assert.equal(result.message, 'Order cancelled successfully');
+  assert.equal(updatedStatusData.status, 'ANNULE');
+  assert.equal(result.ordre.status, 'ANNULE');
+});
+
+test('annuler throws 404 when order does not exist', async () => {
+  stub(OrdreRepository, 'findById', async () => null);
+
+  await assert.rejects(
+    () => OrdreService.annuler(ids.ordre),
+    (error) => { expectError(error, 404, 'OrdreFabrication not found'); return true; }
+  );
+});
+
+test('annuler rejects when order is in progress (materials already consumed)', async () => {
+  stub(OrdreRepository, 'findById', async () => ({ _id: ids.ordre, status: 'EN_COURS' }));
+
+  await assert.rejects(
+    () => OrdreService.annuler(ids.ordre),
+    (error) => {
+      expectError(error, 400, 'Cannot cancel an order in progress: materials have already been consumed');
+      return true;
+    }
+  );
+});
+
+test('annuler rejects when order is already completed', async () => {
+  stub(OrdreRepository, 'findById', async () => ({ _id: ids.ordre, status: 'TERMINE' }));
+
+  await assert.rejects(
+    () => OrdreService.annuler(ids.ordre),
+    (error) => { expectError(error, 409, 'Cannot cancel a completed order'); return true; }
+  );
+});
+
+test('annuler rejects when order is already cancelled', async () => {
+  stub(OrdreRepository, 'findById', async () => ({ _id: ids.ordre, status: 'ANNULE' }));
+
+  await assert.rejects(
+    () => OrdreService.annuler(ids.ordre),
+    (error) => { expectError(error, 409, 'Order is already cancelled'); return true; }
+  );
+});

@@ -5,7 +5,7 @@ const { randomUUID } = require('node:crypto');
 const OrdreService = require('../../src/services/OrdreService');
 const app = require('../../src/app');
 
-const serviceMethods = ['create', 'findAll', 'findById', 'demarrer'];
+const serviceMethods = ['create', 'findAll', 'findById', 'demarrer', 'terminer', 'annuler'];
 const originalServiceMethods = new Map(
   serviceMethods.map((m) => [m, OrdreService[m]])
 );
@@ -296,6 +296,194 @@ test('POST /api/ordres/:id/demarrer returns 409 when order is already in progres
     },
     async () => {
       const response = await fetch(`${baseUrl}/api/ordres/${id}/demarrer`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 409);
+      assert.deepEqual(await response.json(), { status: 'error', message });
+    }
+  );
+});
+
+// ── POST /api/ordres/:id/terminer & /complete ────────────────────────────────
+
+test('POST /api/ordres/:id/terminer returns 200 and completion results', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const completeResult = {
+    message: 'Order completed successfully',
+    ordre: { _id: id, status: 'TERMINE', dateFin: new Date().toISOString() },
+  };
+
+  await withServiceMocks(
+    {
+      terminer: async (receivedId) => {
+        assert.equal(receivedId, id);
+        return completeResult;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/terminer`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 200);
+      assert.deepEqual(await response.json(), completeResult);
+    }
+  );
+});
+
+test('POST /api/ordres/:id/complete alias also completes order', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const completeResult = {
+    message: 'Order completed successfully',
+    ordre: { _id: id, status: 'TERMINE' },
+  };
+
+  await withServiceMocks(
+    {
+      terminer: async (receivedId) => {
+        assert.equal(receivedId, id);
+        return completeResult;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/complete`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 200);
+      assert.deepEqual(await response.json(), completeResult);
+    }
+  );
+});
+
+test('POST /api/ordres/:id/terminer returns 404 when order does not exist', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const message = 'OrdreFabrication not found';
+
+  await withServiceMocks(
+    {
+      terminer: async () => {
+        const error = new Error(message);
+        error.statusCode = 404;
+        throw error;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/terminer`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 404);
+      assert.deepEqual(await response.json(), { status: 'error', message });
+    }
+  );
+});
+
+test('POST /api/ordres/:id/terminer returns 409 when order is in invalid status', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const message = 'Cannot complete an order that is planned and not in progress';
+
+  await withServiceMocks(
+    {
+      terminer: async () => {
+        const error = new Error(message);
+        error.statusCode = 409;
+        throw error;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/terminer`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 409);
+      assert.deepEqual(await response.json(), { status: 'error', message });
+    }
+  );
+});
+
+// ── POST /api/ordres/:id/annuler & /cancel ──────────────────────────────────
+
+test('POST /api/ordres/:id/annuler returns 200 and cancellation results', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const cancelResult = {
+    message: 'Order cancelled successfully',
+    ordre: { _id: id, status: 'ANNULE' },
+  };
+
+  await withServiceMocks(
+    {
+      annuler: async (receivedId) => {
+        assert.equal(receivedId, id);
+        return cancelResult;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/annuler`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 200);
+      assert.deepEqual(await response.json(), cancelResult);
+    }
+  );
+});
+
+test('POST /api/ordres/:id/cancel alias also cancels order', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const cancelResult = {
+    message: 'Order cancelled successfully',
+    ordre: { _id: id, status: 'ANNULE' },
+  };
+
+  await withServiceMocks(
+    {
+      annuler: async (receivedId) => {
+        assert.equal(receivedId, id);
+        return cancelResult;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/cancel`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 200);
+      assert.deepEqual(await response.json(), cancelResult);
+    }
+  );
+});
+
+test('POST /api/ordres/:id/annuler returns 400 when order is in progress', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const message = 'Cannot cancel an order in progress: materials have already been consumed';
+
+  await withServiceMocks(
+    {
+      annuler: async () => {
+        const error = new Error(message);
+        error.statusCode = 400;
+        throw error;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/annuler`, {
+        method: 'POST',
+      });
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), { status: 'error', message });
+    }
+  );
+});
+
+test('POST /api/ordres/:id/annuler returns 409 when order is already cancelled', async () => {
+  const id = '64a1b2c3d4e5f60718293061';
+  const message = 'Order is already cancelled';
+
+  await withServiceMocks(
+    {
+      annuler: async () => {
+        const error = new Error(message);
+        error.statusCode = 409;
+        throw error;
+      },
+    },
+    async () => {
+      const response = await fetch(`${baseUrl}/api/ordres/${id}/annuler`, {
         method: 'POST',
       });
       assert.equal(response.status, 409);
